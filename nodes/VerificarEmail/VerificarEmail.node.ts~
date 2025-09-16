@@ -1,0 +1,106 @@
+import {
+	IDataObject,
+	IExecuteFunctions,
+	INodeExecutionData,
+	INodeType,
+	INodeTypeDescription,
+	NodeConnectionType,
+} from 'n8n-workflow';
+
+// export interface EmailableVerifyResponse {
+// 	email: string;
+// 	state: EmailState;
+// 	deliverable: boolean;
+// 	reason: string;
+// 	score: number;
+// 	first_name?: string;
+// 	last_name?: string;
+// 	gender?: string;
+// 	free?: boolean;
+// 	role?: boolean;
+// 	accept_all?: boolean;
+// 	disposable?: boolean;
+// 	did_you_mean?: string;
+// 	mx_record?: string;
+// 	smtp_provider?: string;
+// 	domain?: string;
+// 	duration?: number;
+// 	user?: string;
+// 	tag?: string;
+// }
+//
+// // Estados posibles del email
+// export type EmailState =
+// 	| 'deliverable'
+// 	| 'undeliverable'
+// 	| 'risky'
+// 	| 'unknown';
+
+export class VerificarEmail implements INodeType {
+	description: INodeTypeDescription = {
+		displayName: 'Verificar Email',
+		name: 'verificarEmail',
+		icon: 'file:batata-icon.svg',
+		group: ['transform'],
+		version: 1,
+		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+		description: 'Verifica la veracidad de un email usando emailable.com',
+		defaults: {
+			name: 'Verificar Email',
+		},
+		inputs: [NodeConnectionType.Main],
+		outputs: [NodeConnectionType.Main],
+		credentials: [
+			{
+				name: 'verificarEmailApi',
+				required: true,
+			},
+		],
+		properties: [
+			{
+				displayName: 'Direccion De Email',
+				name: 'email',
+				type: 'string',
+				placeholder: 'test@example.com',
+				default: '',
+			},
+		],
+	};
+
+	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+		const items = this.getInputData();
+		const returnData: Array<{ json: IDataObject }> = [];
+
+		for (let i = 0; i < items.length; i++) {
+			const email = this.getNodeParameter('email', i) as string;
+			const credentials = await this.getCredentials('verificarEmailApi');
+			const apiKey = credentials?.apiKey;
+
+			const response = await this.helpers.httpRequest({
+				method: 'GET',
+				url: 'https://api.emailable.com/v1/verify',
+				qs: {
+					email,
+					api_key: apiKey,
+				},
+				headers: {
+					Accept: 'application/json',
+				},
+				json: true,
+			});
+
+			const result = Array.isArray(response) ? response : [response];
+
+			result.forEach((item) => {
+				returnData.push({
+					json: {
+						email: item.email,
+						deliverable: item.state === 'deliverable',
+						score: item.score,
+					},
+				});
+			});
+		}
+		return this.prepareOutputData(returnData);
+	}
+}

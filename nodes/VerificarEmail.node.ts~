@@ -1,0 +1,47 @@
+import { INodeType, INodeTypeDescription, NodeConnectionType } from 'n8n-workflow';
+
+export class VerificarEmail implements INodeType {
+	description: INodeTypeDescription = {
+		displayName: 'Verificar Email',
+		name: 'verificarEmail',
+		icon: 'file:batata-icon.svg',
+		group: ['transform'],
+		version: 1,
+		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+		description: 'Verifica la veracidad de un email usando emailable.com',
+		defaults: {
+			name: 'NASA Pics',
+		},
+		inputs: [NodeConnectionType.Main],
+		outputs: [NodeConnectionType.Main],
+		credentials: [
+			{
+				name: 'VerificarEmailApi',
+				required: true,
+			},
+		],
+		requestDefaults: {
+			baseURL: 'https://api.emailable.com/v1/verify',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+		},
+		properties: [
+			{
+				displayName: 'Direccion De Email',
+				name: 'email',
+				type: 'string',
+				placeholder: 'test@example.com',
+				default: '',
+				routing: {
+					request: {
+						body: {
+							email: '={{$value}}',
+						},
+					},
+				},
+			},
+		]
+	};
+}
