@@ -8,8 +8,9 @@
   "license": "MIT",
   "homepage": "",
   "author": {
-    "name": "",
-    "email": ""
+    "name": "Frank Gomez",
+    "email": "brochegomezf@gmail.com",
+    "description": "nodo para verificar si un email es valido"
   },
   "repository": {
     "type": "git",
