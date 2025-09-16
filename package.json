@@ -1,5 +1,5 @@
 {
-  "name": "n8n-nodes-verificaremail",
+  "name": "n8n-nodes-emailable-verificar-email-fabroche",
   "version": "0.1.0",
   "description": "nodo para verificar si un email es valido",
   "keywords": [
