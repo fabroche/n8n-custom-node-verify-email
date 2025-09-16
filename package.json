@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-verificaremail",
   "version": "0.1.0",
-  "description": "",
+  "description": "nodo para verificar si un email es valido",
   "keywords": [
     "n8n-community-node-package"
   ],
@@ -9,8 +9,7 @@
   "homepage": "",
   "author": {
     "name": "Frank Gomez",
-    "email": "brochegomezf@gmail.com",
-    "description": "nodo para verificar si un email es valido"
+    "email": "brochegomezf@gmail.com"
   },
   "repository": {
     "type": "git",
